@@ -17,13 +17,11 @@ app.use(express.urlencoded({ extended: false }));
 
 app.set("view engine", "ejs");
 
-app.use(express.static('views'));
 app.use(express.static('public'));
 
 app.use("/css", express.static(__dirname + "public/css"));
 app.use("/script", express.static(__dirname + "public/script"));
-app.use("/layouts", express.static(__dirname + "views/layouts"));
-app.use("/partials", express.static(__dirname + "views/partials"));
+app.use("/layouts", express.static(__dirname + "/views/layouts"));
 
 app.use(
     cookieSession({

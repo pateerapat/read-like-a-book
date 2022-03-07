@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include("../partials/head-tag.ejs") %>
+<%- include("../partials/head-tag-partial.ejs") %>
 <body>
     
-    <div>
-        Test
+    <div id="app">
+        {{ test }}
     </div>
 
 </body>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            test: "tessst",
+        },
+    });
+</script>
 </html>
