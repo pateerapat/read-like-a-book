@@ -28,17 +28,17 @@
                 <div class="col-6">
                     <div class="card mt-5 p-3">
                         <div class="card-body card-body d-flex flex-column">
-                            <!-- Form Login -->
-                            <form method="POST" action="/login">
+                            <!-- Form Register -->
+                            <form method="POST" action="/register">
                                 <div class="card-body">
                                     <h3>
-                                        <span class="text-secondary">
+                                        <a href="/login" class="text-decoration-none text-dark">
                                             เข้าสู่ระบบ
-                                        </span>
-                                        /
-                                        <a class="text-decoration-none text-dark" href="/register">
-                                            ลงทะเบียน
                                         </a>
+                                        /
+                                        <span class="text-secondary">
+                                            ลงทะเบียน
+                                        </span>
                                     </h3>
                                     <label class="mt-3">ชื่อผู้ใช้</label>
                                     <input name="username" class="form-control" type="text" placeholder="ชื่อผู้ใช้" required>
@@ -56,17 +56,25 @@
                                             </a>
                                         </span>
                                     </div>
-                                    <button class="btn btn-primary form-control mt-4">เข้าสู่ระบบ</button>
+                                    <div class="d-flex align-items-center">
+                                        <div class="w-50 pe-3">
+                                            <label class="mt-3">ชื่อจริง</label>
+                                            <input name="firstName" class="form-control" type="text" placeholder="ชื่อจริง" required>
+                                        </div>
+                                        <div class="w-50 ps-3">
+                                            <label class="mt-3">นามสกุล</label>
+                                            <input name="lastName" class="form-control" type="text" placeholder="นามสกุล" required>
+                                        </div> 
+                                    </div>
+                                    <label class="mt-3">อีเมล</label>
+                                    <input name="email" class="form-control" type="email" placeholder="อีเมล" required>
+                                    <button class="btn btn-primary form-control mt-4">ลงทะเบียน</button>
                                 </div>
                             </form>
-                            <!-- Form Login -->
+                            <!-- Form Register -->
                             <% if (error) { %>
                                 <p class="text-danger px-3">
                                     <%= error %>
-                                </p>
-                            <% } if (message) { %>
-                                <p class="text-success px-3">
-                                    <%= message %>
                                 </p>
                             <% } %>
                         </div>
