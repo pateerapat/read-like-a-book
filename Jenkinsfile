@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Pull code') {
             steps {
-                git branch: 'development', url: 'https://github.com/pateerapat/read-like-a-book.git'
+                checkout scm
             }
         }
         stage('Setup environment') {
