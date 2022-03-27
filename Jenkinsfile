@@ -19,25 +19,36 @@ pipeline {
                 sh 'npm install'
             }
         }
-        stage('Unit testing') {
+        stage('Deploy development branch') {
             steps {
-                sh 'npx cypress run --spec "cypress/integration/unit-testing.js"'
+                echo 'automatic deploy development branch to heroku'
             }
         }
-        stage('Integration testing') {
+        stage('Unit testing with coverage') {
             steps {
-                sh 'npx cypress run --spec "cypress/integration/integration-testing.js"'
+                sh 'npm run test-unit'
             }
         }
-        stage('Component testing') {
+        stage('Component testing with coverage') {
             steps {
-                sh 'npx cypress run --spec "cypress/integration/component-testing.js"'
+                sh 'npm run test-component'
             }
         }
-        stage('E2E testing') {
+        stage('Integration testing with coverage') {
             steps {
-                sh 'npx cypress run --spec "cypress/integration/e2e-testing.js"'
+                sh 'npm run test-integration'
+            }
+        }
+        stage('E2E testing with coverage') {
+            steps {
+                sh 'npm run test-e2e'
+            }
+        }
+        stage('Deploy main branch') {
+            steps {
+                echo 'automatic deploy main branch to heroku'
             }
         }
     }
 }
+
