@@ -8,7 +8,7 @@ const axios = require("axios");
 
 dotenv.config({ path: "./.env" });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 1000;
 
 const app = express();
 
@@ -107,13 +107,61 @@ app.get("/bookshelf", ifNotLoggedIn, async (req, res, next) => {
     });
 });
 
-app.get("/book/", ifNotLoggedIn, async (req, res, next) => {
+app.get("/cart", ifNotLoggedIn, async (req, res, next) => {
     const response = await getUserData(req.session.token);
-    res.render("layouts/login", {
-        nowOnPage: "book",
-        title: "Test | Home",
-        data: req.query.search,
+    res.render("layouts/cart", {
+        nowOnPage: "cart",
+        title: "Read Like a Book | Your Cart",
+        userData: response.data.payload.data,
+        cart: req.session.cart,
+        total: req.session.total,
     });
+});
+
+app.get("/book", ifNotLoggedIn, async (req, res, next) => {
+    const response = await getUserData(req.session.token);
+    res.render("layouts/book-page", {
+        nowOnPage: "book",
+        title: "Read Like a Book | Book Description",
+        userData: response.data.payload.data,
+    });
+});
+
+app.post("/tocart", ifNotLoggedIn, async (req, res, next) => {
+    for (let i=0; i<req.session.cart.length; i++) {
+        if (req.body.id == req.session.cart[i].id) {
+            return res.redirect(req.get("referer"));
+        }
+    }
+    req.session.cart.push({
+        id: req.body.id,
+        name: req.body.name,
+        image: req.body.image,
+        price: req.body.price,
+    });
+    req.session.cartId.push(req.body.id);
+    let total = 0;
+    for (let i=0; i<req.session.cart.length; i++) {
+        total += parseInt(req.session.cart[i].price);
+    }
+    req.session.total = total;
+    res.redirect(req.get("referer"));
+});
+
+app.post("/deletecart", ifNotLoggedIn, async (req, res, next) => {
+    for (let i=0; i<req.session.cart.length; i++) {
+        if (req.body.id == req.session.cart[i].id) {
+            req.session.cartId.splice(i, 1);
+            req.session.cart.splice(i, 1);
+            break;
+        }
+    }
+    let total = 0;
+    for (let i=0; i<req.session.cart.length; i++) {
+        total += parseInt(req.session.cart[i].price);
+    }
+    req.session.total = total;
+    return res.redirect(req.get("referer"));
 });
 
 // Get - Admin
@@ -206,12 +254,16 @@ app.post("/login", async (req, res, next) => {
     if (response.success) {
         req.session.isLoggedIn = response.payload.isLoggedIn;
         req.session.token = response.payload.token;
+        req.session.cart = [];
+        req.session.total = 0;
+        req.session.cartId = [];
         res.redirect("/");
     } else {
         res.render("layouts/login", {
             nowOnPage: "login",
             title: "Read Like a Book | Login",
             error: response.payload.error,
+            message: response.payload.message,
         });
     };
 });
@@ -254,19 +306,26 @@ app.post("/register", async (req, res, next) => {
 });
 
 app.post("/buy", async (req, res, next) => {
-    const { id } = req.body;
+    let point = 0;
+    if (req.body.point) {
+        point = req.body.point;
+    }
     axios({
         method: "POST",
-        url: "https://read-like-a-book-api.herokuapp.com/owned-book/buy",
+        url: "http://localhost:5000/owned-book/buy",
         headers: {
             authorization: "bearer " + req.session.token,
         },
         data: {
-            book_id: id,
+            book_id: req.session.cartId,
+            point: -parseInt(point),
         },
     })
     .then(
         (response) => {
+            req.session.cart = [];
+            req.session.total = 0;
+            req.session.cartId = [];
             res.redirect('/');
         },
     );
